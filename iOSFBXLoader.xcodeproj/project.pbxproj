@@ -7,14 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5420EBE11BF9D320008D0EDD /* libfbxsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5420EBE01BF9D320008D0EDD /* libfbxsdk.a */; };
+		5420EBE41BF9D3CA008D0EDD /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5420EBE31BF9D3CA008D0EDD /* libiconv.tbd */; };
+		5420EBE61BF9D5B3008D0EDD /* resource in Resources */ = {isa = PBXBuildFile; fileRef = 5420EBE51BF9D5B3008D0EDD /* resource */; };
+		548C0FCF1BF44E72005BD2D3 /* GLESUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 548C0FCE1BF44E72005BD2D3 /* GLESUtils.m */; };
+		548C0FD21BF44E7C005BD2D3 /* FragmentShader.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 548C0FD01BF44E7C005BD2D3 /* FragmentShader.glsl */; };
+		548C0FD31BF44E7C005BD2D3 /* VertexShader.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 548C0FD11BF44E7C005BD2D3 /* VertexShader.glsl */; };
+		548C0FDE1BF58B76005BD2D3 /* ksMatrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 548C0FDA1BF58B76005BD2D3 /* ksMatrix.c */; };
+		548C0FDF1BF58B76005BD2D3 /* ksVector.c in Sources */ = {isa = PBXBuildFile; fileRef = 548C0FDC1BF58B76005BD2D3 /* ksVector.c */; };
+		548C0FE71BF5D133005BD2D3 /* targa.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 548C0FE41BF5D133005BD2D3 /* targa.cxx */; };
+		548C0FF31BF98B3C005BD2D3 /* FBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 548C0FF11BF98B3C005BD2D3 /* FBXLoader.cpp */; };
+		54B05E2B1BF3278E003603D3 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E2A1BF3278E003603D3 /* OpenGLES.framework */; };
+		54B05E2D1BF3279B003603D3 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E2C1BF3279B003603D3 /* GLKit.framework */; };
+		54B05E301BF3338F003603D3 /* GLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 54B05E2F1BF3338F003603D3 /* GLView.mm */; };
+		54B05E331BF33541003603D3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E321BF33541003603D3 /* QuartzCore.framework */; };
+		54B05E351BF3354A003603D3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E341BF3354A003603D3 /* UIKit.framework */; };
+		54B05E371BF33552003603D3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E361BF33552003603D3 /* Foundation.framework */; };
 		54D4F3301BF2DF2C006CABE0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F32F1BF2DF2C006CABE0 /* main.m */; };
 		54D4F3331BF2DF2C006CABE0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3321BF2DF2C006CABE0 /* AppDelegate.m */; };
-		54D4F3361BF2DF2C006CABE0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3351BF2DF2C006CABE0 /* ViewController.m */; };
-		54D4F3391BF2DF2C006CABE0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 54D4F3371BF2DF2C006CABE0 /* Main.storyboard */; };
+		54D4F3361BF2DF2C006CABE0 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3351BF2DF2C006CABE0 /* ViewController.mm */; };
 		54D4F33B1BF2DF2C006CABE0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54D4F33A1BF2DF2C006CABE0 /* Assets.xcassets */; };
-		54D4F33E1BF2DF2C006CABE0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 54D4F33C1BF2DF2C006CABE0 /* LaunchScreen.storyboard */; };
 		54D4F3491BF2DF2C006CABE0 /* iOSFBXLoaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3481BF2DF2C006CABE0 /* iOSFBXLoaderTests.m */; };
 		54D4F3541BF2DF2C006CABE0 /* iOSFBXLoaderUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3531BF2DF2C006CABE0 /* iOSFBXLoaderUITests.m */; };
+		54D4F3631BF2E6B4006CABE0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 54D4F3611BF2E6B4006CABE0 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,15 +50,37 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5420EBE01BF9D320008D0EDD /* libfbxsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfbxsdk.a; path = "../../../../../Applications/Autodesk/FBX SDK/2015.1/lib/libfbxsdk.a"; sourceTree = "<group>"; };
+		5420EBE31BF9D3CA008D0EDD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		5420EBE51BF9D5B3008D0EDD /* resource */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resource; path = iOSFBXLoader/resource; sourceTree = "<group>"; };
+		548C0FCD1BF44E72005BD2D3 /* GLESUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLESUtils.h; sourceTree = "<group>"; };
+		548C0FCE1BF44E72005BD2D3 /* GLESUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLESUtils.m; sourceTree = "<group>"; };
+		548C0FD01BF44E7C005BD2D3 /* FragmentShader.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FragmentShader.glsl; sourceTree = "<group>"; };
+		548C0FD11BF44E7C005BD2D3 /* VertexShader.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VertexShader.glsl; sourceTree = "<group>"; };
+		548C0FDA1BF58B76005BD2D3 /* ksMatrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ksMatrix.c; sourceTree = "<group>"; };
+		548C0FDB1BF58B76005BD2D3 /* ksMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ksMatrix.h; sourceTree = "<group>"; };
+		548C0FDC1BF58B76005BD2D3 /* ksVector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ksVector.c; sourceTree = "<group>"; };
+		548C0FDD1BF58B76005BD2D3 /* ksVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ksVector.h; sourceTree = "<group>"; };
+		548C0FE41BF5D133005BD2D3 /* targa.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = targa.cxx; sourceTree = "<group>"; };
+		548C0FE51BF5D133005BD2D3 /* targa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = targa.h; sourceTree = "<group>"; };
+		548C0FF11BF98B3C005BD2D3 /* FBXLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FBXLoader.cpp; path = CloverFBXLoader/FBXLoader.cpp; sourceTree = "<group>"; };
+		548C0FF21BF98B3C005BD2D3 /* FBXLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FBXLoader.hpp; path = CloverFBXLoader/FBXLoader.hpp; sourceTree = "<group>"; };
+		548C0FF41BF98E26005BD2D3 /* iOSFBXLoader-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iOSFBXLoader-Prefix.pch"; sourceTree = "<group>"; };
+		54B05E2A1BF3278E003603D3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		54B05E2C1BF3279B003603D3 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		54B05E2E1BF3338F003603D3 /* GLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLView.h; sourceTree = "<group>"; };
+		54B05E2F1BF3338F003603D3 /* GLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLView.mm; sourceTree = "<group>"; };
+		54B05E311BF333A2003603D3 /* CSMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSMath.h; sourceTree = "<group>"; };
+		54B05E321BF33541003603D3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		54B05E341BF3354A003603D3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		54B05E361BF33552003603D3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		54D4F32B1BF2DF2C006CABE0 /* iOSFBXLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSFBXLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54D4F32F1BF2DF2C006CABE0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		54D4F3311BF2DF2C006CABE0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		54D4F3321BF2DF2C006CABE0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		54D4F3341BF2DF2C006CABE0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		54D4F3351BF2DF2C006CABE0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		54D4F3381BF2DF2C006CABE0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		54D4F3351BF2DF2C006CABE0 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		54D4F33A1BF2DF2C006CABE0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		54D4F33D1BF2DF2C006CABE0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		54D4F33F1BF2DF2C006CABE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54D4F3441BF2DF2C006CABE0 /* iOSFBXLoaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSFBXLoaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		54D4F3481BF2DF2C006CABE0 /* iOSFBXLoaderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iOSFBXLoaderTests.m; sourceTree = "<group>"; };
@@ -51,6 +88,7 @@
 		54D4F34F1BF2DF2C006CABE0 /* iOSFBXLoaderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSFBXLoaderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		54D4F3531BF2DF2C006CABE0 /* iOSFBXLoaderUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iOSFBXLoaderUITests.m; sourceTree = "<group>"; };
 		54D4F3551BF2DF2C006CABE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		54D4F3621BF2E6B4006CABE0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +96,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5420EBE41BF9D3CA008D0EDD /* libiconv.tbd in Frameworks */,
+				5420EBE11BF9D320008D0EDD /* libfbxsdk.a in Frameworks */,
+				54B05E371BF33552003603D3 /* Foundation.framework in Frameworks */,
+				54B05E351BF3354A003603D3 /* UIKit.framework in Frameworks */,
+				54B05E331BF33541003603D3 /* QuartzCore.framework in Frameworks */,
+				54B05E2D1BF3279B003603D3 /* GLKit.framework in Frameworks */,
+				54B05E2B1BF3278E003603D3 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,9 +123,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		548C0FD91BF58B66005BD2D3 /* temp */ = {
+			isa = PBXGroup;
+			children = (
+				548C0FDA1BF58B76005BD2D3 /* ksMatrix.c */,
+				548C0FDB1BF58B76005BD2D3 /* ksMatrix.h */,
+				548C0FDC1BF58B76005BD2D3 /* ksVector.c */,
+				548C0FDD1BF58B76005BD2D3 /* ksVector.h */,
+			);
+			name = temp;
+			sourceTree = "<group>";
+		};
+		54B05E221BF32740003603D3 /* FBXLoader */ = {
+			isa = PBXGroup;
+			children = (
+				548C0FE41BF5D133005BD2D3 /* targa.cxx */,
+				548C0FE51BF5D133005BD2D3 /* targa.h */,
+				548C0FF11BF98B3C005BD2D3 /* FBXLoader.cpp */,
+				548C0FF21BF98B3C005BD2D3 /* FBXLoader.hpp */,
+			);
+			name = FBXLoader;
+			sourceTree = "<group>";
+		};
+		54B05E291BF32779003603D3 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				54B05E361BF33552003603D3 /* Foundation.framework */,
+				54B05E341BF3354A003603D3 /* UIKit.framework */,
+				54B05E321BF33541003603D3 /* QuartzCore.framework */,
+				54B05E2C1BF3279B003603D3 /* GLKit.framework */,
+				54B05E2A1BF3278E003603D3 /* OpenGLES.framework */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
 		54D4F3221BF2DF2C006CABE0 = {
 			isa = PBXGroup;
 			children = (
+				5420EBE51BF9D5B3008D0EDD /* resource */,
+				5420EBE31BF9D3CA008D0EDD /* libiconv.tbd */,
+				5420EBE01BF9D320008D0EDD /* libfbxsdk.a */,
+				54B05E291BF32779003603D3 /* Framework */,
 				54D4F32D1BF2DF2C006CABE0 /* iOSFBXLoader */,
 				54D4F3471BF2DF2C006CABE0 /* iOSFBXLoaderTests */,
 				54D4F3521BF2DF2C006CABE0 /* iOSFBXLoaderUITests */,
@@ -101,14 +184,15 @@
 		54D4F32D1BF2DF2C006CABE0 /* iOSFBXLoader */ = {
 			isa = PBXGroup;
 			children = (
+				54B05E221BF32740003603D3 /* FBXLoader */,
+				54D4F3671BF2EA8F006CABE0 /* GLView */,
 				54D4F3311BF2DF2C006CABE0 /* AppDelegate.h */,
 				54D4F3321BF2DF2C006CABE0 /* AppDelegate.m */,
 				54D4F3341BF2DF2C006CABE0 /* ViewController.h */,
-				54D4F3351BF2DF2C006CABE0 /* ViewController.m */,
-				54D4F3371BF2DF2C006CABE0 /* Main.storyboard */,
+				54D4F3351BF2DF2C006CABE0 /* ViewController.mm */,
 				54D4F33A1BF2DF2C006CABE0 /* Assets.xcassets */,
-				54D4F33C1BF2DF2C006CABE0 /* LaunchScreen.storyboard */,
 				54D4F33F1BF2DF2C006CABE0 /* Info.plist */,
+				54D4F3611BF2E6B4006CABE0 /* LaunchScreen.storyboard */,
 				54D4F32E1BF2DF2C006CABE0 /* Supporting Files */,
 			);
 			path = iOSFBXLoader;
@@ -117,6 +201,9 @@
 		54D4F32E1BF2DF2C006CABE0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				548C0FF41BF98E26005BD2D3 /* iOSFBXLoader-Prefix.pch */,
+				548C0FD01BF44E7C005BD2D3 /* FragmentShader.glsl */,
+				548C0FD11BF44E7C005BD2D3 /* VertexShader.glsl */,
 				54D4F32F1BF2DF2C006CABE0 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -138,6 +225,19 @@
 				54D4F3551BF2DF2C006CABE0 /* Info.plist */,
 			);
 			path = iOSFBXLoaderUITests;
+			sourceTree = "<group>";
+		};
+		54D4F3671BF2EA8F006CABE0 /* GLView */ = {
+			isa = PBXGroup;
+			children = (
+				548C0FD91BF58B66005BD2D3 /* temp */,
+				548C0FCD1BF44E72005BD2D3 /* GLESUtils.h */,
+				548C0FCE1BF44E72005BD2D3 /* GLESUtils.m */,
+				54B05E311BF333A2003603D3 /* CSMath.h */,
+				54B05E2E1BF3338F003603D3 /* GLView.h */,
+				54B05E2F1BF3338F003603D3 /* GLView.mm */,
+			);
+			name = GLView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -243,9 +343,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54D4F33E1BF2DF2C006CABE0 /* LaunchScreen.storyboard in Resources */,
+				5420EBE61BF9D5B3008D0EDD /* resource in Resources */,
 				54D4F33B1BF2DF2C006CABE0 /* Assets.xcassets in Resources */,
-				54D4F3391BF2DF2C006CABE0 /* Main.storyboard in Resources */,
+				548C0FD21BF44E7C005BD2D3 /* FragmentShader.glsl in Resources */,
+				548C0FD31BF44E7C005BD2D3 /* VertexShader.glsl in Resources */,
+				54D4F3631BF2E6B4006CABE0 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,9 +372,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54D4F3361BF2DF2C006CABE0 /* ViewController.m in Sources */,
+				548C0FDE1BF58B76005BD2D3 /* ksMatrix.c in Sources */,
+				54D4F3361BF2DF2C006CABE0 /* ViewController.mm in Sources */,
+				54B05E301BF3338F003603D3 /* GLView.mm in Sources */,
+				548C0FDF1BF58B76005BD2D3 /* ksVector.c in Sources */,
+				548C0FCF1BF44E72005BD2D3 /* GLESUtils.m in Sources */,
+				548C0FE71BF5D133005BD2D3 /* targa.cxx in Sources */,
 				54D4F3331BF2DF2C006CABE0 /* AppDelegate.m in Sources */,
 				54D4F3301BF2DF2C006CABE0 /* main.m in Sources */,
+				548C0FF31BF98B3C005BD2D3 /* FBXLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,18 +416,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		54D4F3371BF2DF2C006CABE0 /* Main.storyboard */ = {
+		54D4F3611BF2E6B4006CABE0 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				54D4F3381BF2DF2C006CABE0 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		54D4F33C1BF2DF2C006CABE0 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				54D4F33D1BF2DF2C006CABE0 /* Base */,
+				54D4F3621BF2E6B4006CABE0 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -412,22 +512,42 @@
 		54D4F3591BF2DF2C006CABE0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iOSFBXLoader/iOSFBXLoader-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"/Applications/Autodesk/FBX SDK/2015.1/include\"";
 				INFOPLIST_FILE = iOSFBXLoader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SYSTEM_APPS_DIR)/Autodesk/FBX\\ SDK/2015.1/lib";
+				OTHER_LDFLAGS = "-lfbxsdk";
 				PRODUCT_BUNDLE_IDENTIFIER = clover.iOSFBXLoader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
 		54D4F35A1BF2DF2C006CABE0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iOSFBXLoader/iOSFBXLoader-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"/Applications/Autodesk/FBX SDK/2015.1/include\"";
 				INFOPLIST_FILE = iOSFBXLoader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SYSTEM_APPS_DIR)/Autodesk/FBX\\ SDK/2015.1/lib";
+				OTHER_LDFLAGS = "-lfbxsdk";
 				PRODUCT_BUNDLE_IDENTIFIER = clover.iOSFBXLoader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -498,6 +618,7 @@
 				54D4F35A1BF2DF2C006CABE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		54D4F35B1BF2DF2C006CABE0 /* Build configuration list for PBXNativeTarget "iOSFBXLoaderTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +627,7 @@
 				54D4F35D1BF2DF2C006CABE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		54D4F35E1BF2DF2C006CABE0 /* Build configuration list for PBXNativeTarget "iOSFBXLoaderUITests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +636,7 @@
 				54D4F3601BF2DF2C006CABE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
