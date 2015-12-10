@@ -6,12 +6,17 @@ uniform mat3 normalMatrix;
 uniform vec3 vLightPosition;
 uniform vec4 vAmbientMaterial;
 uniform vec4 vSpecularMaterial;
+uniform vec4 vEmissionMaterial;
+
 uniform float shininess;
 
 attribute vec3 vNormal;
 attribute vec4 vDiffuseMaterial;
 
 varying vec4 vDestinationColor;
+
+attribute vec2 TexCoordIn;
+varying vec2 TexCoordOut;
 
 void main(void)
 {
@@ -27,7 +32,9 @@ void main(void)
     float sf = max(0.0, dot(N, H));
     sf = pow(sf, shininess);
     
-    vDestinationColor = vAmbientMaterial + df * vDiffuseMaterial + sf * vSpecularMaterial;
+    vDestinationColor = vAmbientMaterial + df * vDiffuseMaterial + sf * vSpecularMaterial + vEmissionMaterial;
+    
+    TexCoordOut = TexCoordIn;
     
     //vDestinationColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 #include <fbxsdk.h>
+#include <OpenGLES/gltypes.h>
+#include "MaterialCache.hpp"
 
 struct ModelBoneWeight
 {
@@ -42,13 +44,40 @@ struct ModelMesh
     std::vector<ModelVertex> vertexList;
     //  std::vector<uint16_t> indexList;
     std::vector<int> indexList;
+    std::vector<int> indexListControlByPolygon;
     
     GLKMatrix4 invMeshBaseposeMatrix;
     std::vector<std::string> boneNodeNameList;
     std::vector<GLKMatrix4> invBoneBaseposeMatrixList;
+    bool haveMaterial;
     //jiangbo
+};
+/*
+struct ColorChannel
+{
     
+    ColorChannel() : mTextureName(0)
+    {
+        mColor[0] = 0.0f;
+        mColor[1] = 0.0f;
+        mColor[2] = 0.0f;
+        mColor[3] = 1.0f;
+    }
     
+    uint mTextureName;
+    float mColor[4];
+};
+ */
+
+
+
+struct ModelTexture {
+    FbxFileTexture *fbxFileTexture;
+    std::string texturePath;
+    int width;
+    int hight;
+    unsigned char colorChannel;
+    unsigned char *data;
 };
 
 class FBXLoader
@@ -64,12 +93,15 @@ public:
     {
         return this->animationEndFrame;
     }
+    int _numberOfMesh;
+    bool _haveMaterial;
     
     /////////////////////////////////////////////////////Methods  //////////////////////////////////////////
     FBXLoader(const char* filepath);
     ~FBXLoader();
     ModelMesh getMesh(int index);
-    
+    std::string getTexturePath(int index);
+    ModelMaterial getMaterial(int index);
     void updateMash();
     
     //std::vector<GLKVector4> modelPositionList;
@@ -79,6 +111,9 @@ private:
     FbxManager* _sdkManager;
     FbxScene* _fbxScene;
     std::vector<ModelMesh> _meshList;
+    std::vector<ModelMaterial> _materialList;
+    std::vector<ModelTexture> _textureList;
+    std::map<std::string, int> _materialIdDictionary;
     FbxArray<FbxString*> _mAnimStackNameArray;
     FbxAnimLayer * _CurrentAnimLayer;
     mutable FbxTime _mStart , _mStop;
@@ -90,10 +125,13 @@ private:
     float animationEndFrame;
     
     bool _allByControlPoint;
-    
     /////////////////////////////////////////////////////Methods  //////////////////////////////////////////
     void initMeshList(FbxScene *scene);
+
+    //std::vector<int> getModelMeshIndexList(FbxMesh *mesh, bool allByCtrlPoint, std::vector<int> & indexListByPolygon);
+    
     ModelMesh parseMesh(FbxMesh *mesh, bool allByCrtlPoint);
+    //ModelMaterial ParseMaterial(FbxSurfaceMaterial* material);
     bool thisMashIsAllByControlPoint(FbxMesh *pMesh);
     
     void initAnimationArray(FbxScene *scene);

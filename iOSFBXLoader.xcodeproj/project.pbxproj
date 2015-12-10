@@ -23,6 +23,7 @@
 		54B05E331BF33541003603D3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E321BF33541003603D3 /* QuartzCore.framework */; };
 		54B05E351BF3354A003603D3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E341BF3354A003603D3 /* UIKit.framework */; };
 		54B05E371BF33552003603D3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B05E361BF33552003603D3 /* Foundation.framework */; };
+		54BF64281C0854BF00C53AE4 /* MaterialCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54BF64261C0854BF00C53AE4 /* MaterialCache.cpp */; };
 		54D4F3301BF2DF2C006CABE0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F32F1BF2DF2C006CABE0 /* main.m */; };
 		54D4F3331BF2DF2C006CABE0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3321BF2DF2C006CABE0 /* AppDelegate.m */; };
 		54D4F3361BF2DF2C006CABE0 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 54D4F3351BF2DF2C006CABE0 /* ViewController.mm */; };
@@ -74,6 +75,8 @@
 		54B05E321BF33541003603D3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		54B05E341BF3354A003603D3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		54B05E361BF33552003603D3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		54BF64261C0854BF00C53AE4 /* MaterialCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialCache.cpp; path = iOSFBXLoader/CloverFBXLoader/MaterialCache.cpp; sourceTree = "<group>"; };
+		54BF64271C0854BF00C53AE4 /* MaterialCache.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MaterialCache.hpp; path = iOSFBXLoader/CloverFBXLoader/MaterialCache.hpp; sourceTree = "<group>"; };
 		54D4F32B1BF2DF2C006CABE0 /* iOSFBXLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSFBXLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54D4F32F1BF2DF2C006CABE0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		54D4F3311BF2DF2C006CABE0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -160,6 +163,8 @@
 		54D4F3221BF2DF2C006CABE0 = {
 			isa = PBXGroup;
 			children = (
+				54BF64261C0854BF00C53AE4 /* MaterialCache.cpp */,
+				54BF64271C0854BF00C53AE4 /* MaterialCache.hpp */,
 				5420EBE51BF9D5B3008D0EDD /* resource */,
 				5420EBE31BF9D3CA008D0EDD /* libiconv.tbd */,
 				5420EBE01BF9D320008D0EDD /* libfbxsdk.a */,
@@ -375,6 +380,7 @@
 				548C0FDE1BF58B76005BD2D3 /* ksMatrix.c in Sources */,
 				54D4F3361BF2DF2C006CABE0 /* ViewController.mm in Sources */,
 				54B05E301BF3338F003603D3 /* GLView.mm in Sources */,
+				54BF64281C0854BF00C53AE4 /* MaterialCache.cpp in Sources */,
 				548C0FDF1BF58B76005BD2D3 /* ksVector.c in Sources */,
 				548C0FCF1BF44E72005BD2D3 /* GLESUtils.m in Sources */,
 				548C0FE71BF5D133005BD2D3 /* targa.cxx in Sources */,

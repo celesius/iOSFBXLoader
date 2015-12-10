@@ -7,8 +7,7 @@
 //
 
 #include "FBXLoader.hpp"
-
-std::vector<int>  getModelMeshIndexList(FbxMesh *mesh) {
+std::vector<int>  getModelMeshIndexList(FbxMesh *mesh, bool allByCtrlPoint, std::vector<int> & indexListByPolygon) {
     int polygonCount = mesh->GetPolygonCount();
     std::vector<int> indexList;
     indexList.reserve(polygonCount * 3);
@@ -18,9 +17,15 @@ std::vector<int>  getModelMeshIndexList(FbxMesh *mesh) {
         indexList.push_back(mesh->GetPolygonVertex(i, 0));
         indexList.push_back(mesh->GetPolygonVertex(i, 1));
         indexList.push_back(mesh->GetPolygonVertex(i, 2));
+        if (!allByCtrlPoint) {
+            indexListByPolygon.push_back(i*3 + 0);
+            indexListByPolygon.push_back(i*3 + 1);
+            indexListByPolygon.push_back(i*3 + 2);
+        }
     }
     return indexList;
 }
+
 
 std::vector<GLKVector4> getModelPositionList(FbxMesh* mesh, const std::vector<int>& indexList, bool allByCtrlPoint)
 {
@@ -117,7 +122,7 @@ std::vector<GLKVector3> getModelNormalList(FbxMesh* mesh, const std::vector<int>
                     normalList.push_back(GLKVector3Make(normal[0], normal[1], normal[2]));
                     
                     // wは1.0のみ対応
-                    assert(normal[3] == 1.0);
+                    //assert(normal[3] == 1.0); //jiangbo 11.27
                     
                     ++indexByPolygonVertex;
                 }
@@ -303,7 +308,61 @@ void GetWeight(FbxMesh* mesh, const std::vector<int>& indexList, std::vector<Mod
     }
 }
 
-FBXLoader::FBXLoader(const char* filepath) :_allByControlPoint(true)
+FbxDouble3 GetMaterialProperty(const FbxSurfaceMaterial * pMaterial,
+                               const char * pPropertyName,
+                               const char * pFactorPropertyName,
+                               uint & pTextureName)
+{
+    FbxDouble3 lResult(0, 0, 0);
+    const FbxProperty lProperty = pMaterial->FindProperty(pPropertyName);
+    const FbxProperty lFactorProperty = pMaterial->FindProperty(pFactorPropertyName);
+    if (lProperty.IsValid() && lFactorProperty.IsValid())
+    {
+        lResult = lProperty.Get<FbxDouble3>();
+        double lFactor = lFactorProperty.Get<FbxDouble>();
+        if (lFactor != 1)
+        {
+            lResult[0] *= lFactor;
+            lResult[1] *= lFactor;
+            lResult[2] *= lFactor;
+        }
+    }
+    
+    if (lProperty.IsValid())
+    {
+        const int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
+        if (lTextureCount)
+        {
+            const FbxFileTexture* lTexture = lProperty.GetSrcObject<FbxFileTexture>();
+            if (lTexture && lTexture->GetUserDataPtr())
+            {
+                pTextureName = *(static_cast<uint *>(lTexture->GetUserDataPtr()));
+            }
+        }
+    }
+    
+    return lResult;
+}
+
+bool fillTexture(FbxTexture *pTexture, ModelTexture &modelTexture) {
+    FbxString textureType =  pTexture->GetTextureType();
+    std::cout<<textureType<<std::endl;
+    FbxFileTexture * lFileTexture = FbxCast<FbxFileTexture>(pTexture);
+    if (lFileTexture && !lFileTexture->GetUserDataPtr()) {
+        const FbxString lFileName = lFileTexture->GetFileName();
+        modelTexture.texturePath = lFileName;
+        modelTexture.fbxFileTexture = lFileTexture;
+        double ScaleU = lFileTexture->GetScaleU();
+        double ScaleV = lFileTexture->GetScaleV();
+        std::cout<<lFileName<<std::endl;
+    }
+    //FbxString textureFileName = pTexture->
+    //FBXSDK_printf(" textureType = %c ",textureType.);
+    
+    return true;
+}
+
+FBXLoader::FBXLoader(const char* filepath) :_allByControlPoint(true) ,_haveMaterial(false)
 {
     //Create the FBX SDK manager
     
@@ -335,7 +394,6 @@ FBXLoader::FBXLoader(const char* filepath) :_allByControlPoint(true)
     std::cout<< lPath <<std::endl;
     _sdkManager->LoadPluginsDirectory(lPath.Buffer());
     
-    
     _fbxScene = FbxScene::Create(_sdkManager, "iOSFBXScene");
     if(!_fbxScene) {
         FBXSDK_printf("EERRRR _fbxScene");
@@ -359,12 +417,66 @@ FBXLoader::~FBXLoader() {
 
 }
 
+
+std::string FBXLoader::getTexturePath(int index) {
+    return _textureList[index].texturePath;
+}
+
+ModelMaterial FBXLoader::getMaterial(int index) {
+    return _materialList[index];
+}
+
 void FBXLoader::initMeshList(FbxScene *scene) {
-    float meshCout = scene->GetMemberCount<FbxMesh>();
-    FBXSDK_printf(" meshCout = %f\n ",meshCout);
+    int materialCount = scene->GetMaterialCount();
+    int textureCount = scene->GetTextureCount();
+    int meshCout = scene->GetMemberCount<FbxMesh>();
+    FBXSDK_printf(" scene->GetMemberCount<FbxMesh> = %d\n ",meshCout);
+    FBXSDK_printf(" node->GetMaterialCount  = %d \n",materialCount );
+    FBXSDK_printf(" node->GetTextureCount   = %d \n",textureCount);
+    _materialList.reserve(materialCount);
+    _textureList.reserve(textureCount);
+    /**
+     *  解析贴图数据
+     */
+    for (int i = 0; i < textureCount; i ++) {
+        ModelTexture mModelText;
+        FbxTexture *lTexture = scene->GetTexture(i);
+        FbxFileTexture::EUnifiedMappingType maptype =  lTexture->CurrentMappingType;
+        FbxFileTexture::EBlendMode blendMode = lTexture->CurrentTextureBlendMode;
+        //FbxFileTexture::EAlignMode alignMode = lTexture->cu
+        
+        bool isOK = fillTexture(lTexture, mModelText);
+        _textureList.push_back(mModelText);
+    }
+    
+    for (int i = 0; i < materialCount; ++i)
+    {
+       // auto fbxMaterial = scene->GetMaterial(i);
+       // auto modelMaterial = this->ParseMaterial(fbxMaterial);
+       // this->_materialList.push_back(modelMaterial);
+       // this->_materialIdDictionary.insert({modelMaterial.materialName, i});
+        ModelMaterial material;
+        FbxSurfaceMaterial * lMaterial = scene->GetMaterial(i);
+		if (lMaterial && !lMaterial->GetUserDataPtr())
+		{
+			FbxAutoPtr<MaterialCache> lMaterialCache(new MaterialCache);
+			if (lMaterialCache->Initialize(lMaterial,material))
+			{
+				lMaterial->SetUserDataPtr(lMaterialCache.Release());
+			}
+            _materialList.push_back(material);
+            _haveMaterial = true;
+		}
+    }
+    
+    _numberOfMesh = meshCout;
     _meshList.reserve(meshCout);
     for (int i=0; i<meshCout; i++) {
         FbxMesh *fbxMesh = scene->GetMember<FbxMesh>(i);
+        //const char *name = fbxMesh->GetName();
+        //std::string nameS;
+        //printf(" ")
+        //printf(" fbxMesh->GetName() = %s \n",name);
         _allByControlPoint = thisMashIsAllByControlPoint(fbxMesh);
         if(_allByControlPoint) {
             printf("mesh %d is All By ControlPoint \n",i);
@@ -418,17 +530,23 @@ bool FBXLoader::thisMashIsAllByControlPoint(FbxMesh *pMesh) {
 ModelMesh FBXLoader::parseMesh(FbxMesh *pMesh, bool allByCrtlPoint) {
     ModelMesh modelMesh;
     FbxNode *node = pMesh->GetNode();
-    FBXSDK_printf(" node->GetMaterialCount() = %d \n",node->GetMaterialCount());
+    
     //开始填充modeleMesh;
     modelMesh.nodeName = node->GetName();
+    modelMesh.materialName = node->GetMaterial(0)->GetName();
     FBXSDK_printf("node->GetName() = %s\n",node->GetName());
+    FBXSDK_printf("node->GetMaterial(0)->GetName() = %s\n",node->GetMaterial(0)->GetName() );
+    
+    for (int i = 0; i<node->GetMaterialCount(); i++) {
+    FBXSDK_printf(" %d material name = %s\n",i,node->GetMaterial(i)->GetName());
+    }
+    
     int triangleCount = pMesh->GetPolygonCount();
     int lPolygonVertexCount = pMesh->GetControlPointsCount();
     int verterCount = 0;
     
     std::vector<int>  & modelIndexList = modelMesh.indexList;
-    //index 不受ctrlPoint影响
-    modelIndexList = getModelMeshIndexList(pMesh);
+    modelIndexList = getModelMeshIndexList(pMesh,allByCrtlPoint,modelMesh.indexListControlByPolygon);
     FBXSDK_printf(" modelIndexList.size() = %lu\n", modelIndexList.size());
     std::vector<GLKVector4> modelPositionList = getModelPositionList(pMesh, modelIndexList, allByCrtlPoint);
     FBXSDK_printf(" modelPositionList.size() = %lu\n", modelPositionList.size());
@@ -527,6 +645,76 @@ ModelMesh FBXLoader::parseMesh(FbxMesh *pMesh, bool allByCrtlPoint) {
      */
     return modelMesh;
 }
+/*
+ModelMaterial FBXLoader::ParseMaterial(FbxSurfaceMaterial* material)
+{
+    ModelMaterial modelMaterial;
+    modelMaterial.materialName = material->GetName();
+    
+    printf(">> material: %s\n", modelMaterial.materialName.c_str());
+    
+    // CGFXのみ対応
+    auto implementation = GetImplementation(material, FBXSDK_IMPLEMENTATION_CGFX);
+    assert(implementation != nullptr);
+    
+    auto rootTable = implementation->GetRootTable();
+    auto entryCount = rootTable->GetEntryCount();
+    
+    for (int i = 0; i < entryCount; ++i)
+    {
+        auto entry = rootTable->GetEntry(i);
+        
+        auto fbxProperty = material->FindPropertyHierarchical(entry.GetSource());
+        if (!fbxProperty.IsValid())
+        {
+            fbxProperty = material->RootProperty.FindHierarchical(entry.GetSource());
+        }
+        
+        auto textureCount = fbxProperty.GetSrcObjectCount<FbxTexture>();
+        if (textureCount > 0)
+        {
+            std::string src = entry.GetSource();
+            
+            for (int j = 0; j < fbxProperty.GetSrcObjectCount<FbxFileTexture>(); ++j)
+            {
+                auto tex = fbxProperty.GetSrcObject<FbxFileTexture>(j);
+                std::string texName = tex->GetFileName();
+                texName = texName.substr(texName.find_last_of('/') + 1);
+                
+                if (src == "Maya|DiffuseTexture")
+                {
+                    modelMaterial.diffuseTextureName = texName;
+                }
+                else if (src == "Maya|NormalTexture")
+                {
+                    modelMaterial.normalTextureName = texName;
+                }
+                else if (src == "Maya|SpecularTexture")
+                {
+                    modelMaterial.specularTextureName = texName;
+                }
+                else if (src == "Maya|FalloffTexture")
+                {
+                    modelMaterial.falloffTextureName = texName;
+                }
+                else if (src == "Maya|ReflectionMapTexture")
+                {
+                    modelMaterial.reflectionMapTextureName = texName;
+                }
+            }
+        }
+    }
+    
+    printf("diffuseTexture: %s\n", modelMaterial.diffuseTextureName.c_str());
+    printf("normalTexture: %s\n", modelMaterial.normalTextureName.c_str());
+    printf("specularTexture: %s\n", modelMaterial.specularTextureName.c_str());
+    printf("falloffTexture: %s\n", modelMaterial.falloffTextureName.c_str());
+    printf("reflectionMapTexture: %s\n", modelMaterial.reflectionMapTextureName.c_str());
+    
+    return modelMaterial;
+}
+
+*/
 
 ModelMesh FBXLoader::getMesh(int index) {
     return _meshList[index];
@@ -536,7 +724,7 @@ ModelMesh FBXLoader::getMesh(int index) {
 
 void FBXLoader::initAnimationArray(FbxScene *scene) {
     scene->FillAnimStackNameArray(_mAnimStackNameArray);
-    SetCurrentAnimStack(1, scene);
+    SetCurrentAnimStack(0, scene);
     
 }
 

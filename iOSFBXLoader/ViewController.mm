@@ -30,8 +30,10 @@
     [super viewDidLoad];
     //self.view.backgroundColor = [UIColor cyanColor];
     NSLog(@" vc bound %@",  NSStringFromCGRect([UIScreen mainScreen].bounds));
-   // NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/ExportScene01" ofType:@"fbx"];
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/humanoid" ofType:@"fbx"];
+    //NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/ExportScene01" ofType:@"fbx"];
+    //NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/humanoid" ofType:@"fbx"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/zombii" ofType:@"fbx"];
+    //NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"resource/bikini-beach-girl" ofType:@"fbx"];
     _fbxloader = new FBXLoader(fbxPath.UTF8String);
 
     _glv = [[GLView alloc]initWithFrame:[UIScreen mainScreen].bounds andFBXLoader:_fbxloader];
@@ -42,7 +44,7 @@
     [_sliderZ setMaximumValue:199];
     [_sliderZ addTarget:self action:@selector(changeZ:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:_sliderZ];
-    [_sliderZ setValue:10];
+    [_sliderZ setValue:1];
     [_glv setModelZ:-_sliderZ.value];
     
     UILabel *modelZLabel = [[UILabel alloc]init];
@@ -52,7 +54,7 @@
     
     UISlider *sliderScale = [[UISlider alloc]initWithFrame:CGRectMake(CGRectGetMinX(_sliderZ.frame), CGRectGetMaxY(_sliderZ.frame) , CGRectGetWidth(_sliderZ.frame), CGRectGetHeight(_sliderZ.frame))];
     [sliderScale setMinimumValue:1];
-    [sliderScale setMaximumValue:20];
+    [sliderScale setMaximumValue:50];
     [sliderScale addTarget:self action:@selector(changeScale:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:sliderScale];
     [sliderScale setValue:10];
@@ -259,8 +261,6 @@
     if(_frame >= self.glv.fbxLoader->GetAnimationEndFrame()) {
         _frame -= self.glv.fbxLoader->GetAnimationEndFrame();
     }
-    NSLog(@" _frame = %f ",_frame);
-    
     //self.glv.fbxLoader->updateMash();
     [self.glv updateDisplay];
     

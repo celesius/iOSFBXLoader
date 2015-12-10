@@ -48,6 +48,13 @@ const GLubyte Indices[]= {
 @property (nonatomic, assign) GLfloat autoR;
 @property (nonatomic, strong) CLVDrawableVBO *renderVBO;
 
+
+@property (nonatomic, assign) GLuint testTexture;
+@property (nonatomic, assign) GLuint modelTexture;
+//@property (nonatomic, assign) GLuint fishTexture;
+@property (nonatomic, assign) GLuint texCoordSlot;
+@property (nonatomic, assign) GLuint textureUniform;
+
 @end
 
 @implementation GLView
@@ -62,6 +69,7 @@ const GLubyte Indices[]= {
 {
     self = [super initWithFrame:frame];
     if (self) {
+        _fbxLoader = fbx;
         // Initialization code
         // 这里注意调用顺序，还是有一定的逻辑性的，当然可以灵活应用，这么安排只是一个更好的逻辑连贯性
         [self setupLayer];
@@ -69,9 +77,11 @@ const GLubyte Indices[]= {
         [self setupProgram];
         [self setupProjection];
         [self setupLights];
-        _fbxLoader = fbx;
-        _modelViewMatrix = GLKMatrix4Identity;
-        _modelViewMatrix =  GLKMatrix4MakeTranslation(0, 0, -2.0);  //GLKMatrix4MakeRotation(rot, 1.0, 0, 0);//(rr, rot, 1.0, 0.0, 0.0);
+        //NSString * texturePath = [[NSBundle mainBundle] pathForResource:@"resource/tile_floor" ofType:@"png" ];
+        //NSString * texturePath = [[NSBundle mainBundle] pathForResource:@"resource/wallpaper-2558371" ofType:@"png" ];
+        //_testTexture = [self setupTexture: texturePath];
+        //_modelViewMatrix = GLKMatrix4Identity;
+        //_modelViewMatrix =  GLKMatrix4MakeTranslation(0, 0, -2.0);  //GLKMatrix4MakeRotation(rot, 1.0, 0, 0);//(rr, rot, 1.0, 0.0, 0.0);
         //[self setupDepthBuffer];
         //[self setupRenderBuffer];
         //[self setupFrameBuffer];
@@ -79,6 +89,94 @@ const GLubyte Indices[]= {
         //[self setupDisplayLink];
     }
     return self;
+}
+
+-(UIImage*)flip:(BOOL)horizontal srcImg:(UIImage *)img
+{
+    CGImageRef cgImage = img.CGImage;
+    const CGFloat originalWidth = CGImageGetWidth(cgImage);
+    const CGFloat originalHeight = CGImageGetHeight(cgImage);
+    /// Number of bytes per row, each pixel in the bitmap will be represented by 4 bytes (ARGB), 8 bits of alpha/red/green/blue
+    const size_t bytesPerRow = originalWidth * 4;
+    
+    GLubyte * spriteData = (GLubyte *) calloc(originalWidth * originalHeight*4, sizeof(GLubyte));
+    
+    /// Create an ARGB bitmap context
+    //CGContextRef bmContext = NYXImageCreateARGBBitmapContext(originalWidth, originalHeight, bytesPerRow);
+    CGContextRef bmContext  = CGBitmapContextCreate(spriteData, originalWidth, originalHeight, 8, bytesPerRow, CGImageGetColorSpace(cgImage), kCGImageAlphaPremultipliedLast);
+    if (!bmContext)
+        return nil;
+    
+    /// Image quality
+    CGContextSetShouldAntialias(bmContext, true);
+    CGContextSetAllowsAntialiasing(bmContext, true);
+    CGContextSetInterpolationQuality(bmContext, kCGInterpolationHigh);
+    
+    horizontal ? CGContextScaleCTM(bmContext, -1.0f, 1.0f) : CGContextScaleCTM(bmContext, 1.0f, -1.0f);
+    
+    /// Draw the image in the bitmap context
+    const CGRect r = horizontal ? (CGRect){.origin.x = -originalWidth, .origin.y = 0.0f, .size.width = originalWidth, .size.height = originalHeight}: (CGRect){.origin.x = 0.0f, .origin.y = -originalHeight, .size.width = originalWidth, .size.height = originalHeight};
+    CGContextDrawImage(bmContext, r, cgImage);
+    
+    /// Create an image object from the context
+    CGImageRef flippedImageRef = CGBitmapContextCreateImage(bmContext);
+#ifdef kNYXReturnRetainedObjects
+    UIImage* flipped = [[UIImage alloc] initWithCGImage:flippedImageRef];
+#else
+    UIImage* flipped = [UIImage imageWithCGImage:flippedImageRef];
+#endif
+    
+    /// Cleanup
+    CGImageRelease(flippedImageRef);
+    CGContextRelease(bmContext);
+    free(spriteData);
+    
+    return flipped;
+}
+
+- (GLuint)setupTexture:(NSString *)fileName {
+    // 1
+    UIImage *texImage = [UIImage imageNamed:fileName];
+    //texImage.imageOrientation
+    NSLog(@" %ld  ",(long)texImage.imageOrientation);
+    UIImage *newImage =  [self flip:NO srcImg:texImage];  //[UIImage imageWithCGImage:texImage.CGImage scale:texImage.scale orientation:UIImageOrientationDownMirrored];
+    NSLog(@" %ld  ",(long)newImage.imageOrientation);
+    CGImageRef spriteImage = newImage.CGImage;
+    if (!spriteImage) {
+        NSLog(@"Failed to load image %@", fileName);
+        exit(1);
+    }
+    
+    // 2
+    size_t width = CGImageGetWidth(spriteImage);
+    size_t height = CGImageGetHeight(spriteImage);
+    
+    GLubyte * spriteData = (GLubyte *) calloc(width*height*4, sizeof(GLubyte));
+    
+    CGContextRef spriteContext = CGBitmapContextCreate(spriteData, width, height, 8, width*4,
+                                                       CGImageGetColorSpace(spriteImage), kCGImageAlphaPremultipliedLast);
+    
+    // 3
+    CGContextDrawImage(spriteContext, CGRectMake(0, 0, width, height), spriteImage);
+    
+    CGContextRelease(spriteContext);
+    
+    // 4
+    GLuint texName;
+    glGenTextures(1, &texName);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //glTexEnvi(GL_TEXTURE_, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+    
+    free(spriteData);        
+    return texName;    
 }
 
 - (void)setupLayer
@@ -139,10 +237,18 @@ const GLubyte Indices[]= {
     _lightPositionSlot  = glGetUniformLocation(_programHandle, "vLightPosition");
     _ambientSlot        = glGetUniformLocation(_programHandle, "vAmbientMaterial");
     _specularSlot       = glGetUniformLocation(_programHandle, "vSpecularMaterial");
+    _emissionSlot       = glGetUniformLocation(_programHandle, "vEmissionMaterial");
     _shininessSlot      = glGetUniformLocation(_programHandle, "shininess");
     _positionSlot       = glGetAttribLocation(_programHandle, "vPosition");
     _normalSlot         = glGetAttribLocation(_programHandle, "vNormal");
     _diffuseSlot        = glGetAttribLocation(_programHandle, "vDiffuseMaterial");
+    
+    glEnableVertexAttribArray(_positionSlot);
+    glEnableVertexAttribArray(_normalSlot);
+    _texCoordSlot = glGetAttribLocation(_programHandle, "TexCoordIn");
+    glEnableVertexAttribArray(_texCoordSlot);
+    _textureUniform = glGetUniformLocation(_programHandle, "Texture");
+    
 }
 
 -(void)setupProjection
@@ -150,7 +256,7 @@ const GLubyte Indices[]= {
     // Generate a perspective matrix with a 60 degree FOV
     float aspect = self.frame.size.width / self.frame.size.height;
     _projectionMatrix = GLKMatrix4Identity;
-    _projectionMatrix = GLKMatrix4MakePerspective(80.0*M_PI/180, aspect, 0.5f, 200.0f);
+    _projectionMatrix = GLKMatrix4MakePerspective(80.0*M_PI/180, aspect, 0.5f, 2000.0f);
     // Load projection matrix
     //glUniformMatrix4fv(_projectionSlot, 1, GL_FALSE, (GLfloat*)&_projectionMatrix.m[0][0]);
     glUniformMatrix4fv(_projectionSlot, 1,GL_FALSE, &_projectionMatrix.m[0]);
@@ -163,18 +269,38 @@ const GLubyte Indices[]= {
 {
     // Initialize various state.
     //
-    glEnableVertexAttribArray(_positionSlot);
-    glEnableVertexAttribArray(_normalSlot);
     
     // Set up some default material parameters.
     //
+    
     _lightPosition.x = 100.0;
     _lightPosition.y = 100.0;
     _lightPosition.z = 100.0;
+   
+    if(_fbxLoader->_haveMaterial) {
+        _ambient.r = _fbxLoader->getMaterial(0).mAmbient.r;
+        _ambient.g = _fbxLoader->getMaterial(0).mAmbient.g;
+        _ambient.b = _fbxLoader->getMaterial(0).mAmbient.b;
+        
+        _specular.r = _fbxLoader->getMaterial(0).mSpecular.r;
+        _specular.g = _fbxLoader->getMaterial(0).mSpecular.g;
+        _specular.b = _fbxLoader->getMaterial(0).mSpecular.b;
+        
+        _diffuse.r = _fbxLoader->getMaterial(0).mDiffuse.r;
+        _diffuse.g = _fbxLoader->getMaterial(0).mDiffuse.g;
+        _diffuse.b = _fbxLoader->getMaterial(0).mDiffuse.b;
+        
+        _emission.r = _fbxLoader->getMaterial(0).mEmissive.r;
+        _emission.g = _fbxLoader->getMaterial(0).mEmissive.g;
+        _emission.b = _fbxLoader->getMaterial(0).mEmissive.b;
     
+        _shininess = _fbxLoader->getMaterial(0).mShinness;
+    }
+    else {
     _ambient.r = 0.3;
     _ambient.g = 0.3;
     _ambient.b = 0.3;
+    
     _specular.r = 0.1;
     _specular.g = 0.1;
     _specular.b = 0.1;
@@ -184,15 +310,27 @@ const GLubyte Indices[]= {
     _diffuse.b = 0.0;
     
     _shininess = 0.1;
+    }
 }
 
 - (void)updateLights
 {
     glUniform3f(_lightPositionSlot, _lightPosition.x, _lightPosition.y, _lightPosition.z);
-    glUniform4f(_ambientSlot, _ambient.r, _ambient.g, _ambient.b, _ambient.a);
-    glUniform4f(_specularSlot, _specular.r, _specular.g, _specular.b, _specular.a);
-    glVertexAttrib4f(_diffuseSlot, _diffuse.r, _diffuse.g, _diffuse.b, _diffuse.a);
-    glUniform1f(_shininessSlot, _shininess);
+    
+    if(_fbxLoader->_haveMaterial) {
+        glUniform4f(_ambientSlot, _ambient.r, _ambient.g, _ambient.b, _ambient.a);
+        glUniform4f(_specularSlot, _specular.r, _specular.g, _specular.b, _specular.a);
+        glUniform4f(_emissionSlot, _emission.r, _emission.g, _emission.b, _emission.a);
+        glVertexAttrib4f(_diffuseSlot, _diffuse.r, _diffuse.g, _diffuse.b, _diffuse.a);
+        glUniform1f(_shininessSlot, _shininess);
+    }
+    else {
+        glUniform4f(_ambientSlot, _ambient.r, _ambient.g, _ambient.b, _ambient.a);
+        glUniform4f(_specularSlot, _specular.r, _specular.g, _specular.b, _specular.a);
+        glVertexAttrib4f(_diffuseSlot, _diffuse.r, _diffuse.g, _diffuse.b, _diffuse.a);
+        glUniform4f(_emissionSlot, 0, 0, 0, 0);
+        glUniform1f(_shininessSlot, _shininess);
+    }
 }
 
 - (void)setupRenderBuffer
@@ -226,23 +364,21 @@ const GLubyte Indices[]= {
 
 - (void)setupBuffer
 {
-        // Setup color render buffer
-    //
-    glGenRenderbuffers(1, &viewRenderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, viewRenderbuffer);
-    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];
-    
     // Setup depth render buffer
     //
-   
     int width, height;
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
     glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
-    
     // Create a depth buffer that has the same size as the color buffer.
     glGenRenderbuffers(1, &depthRenderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+    //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.frame.size.width, self.frame.size.height);
+
+    // Setup color render buffer
+    glGenRenderbuffers(1, &viewRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, viewRenderbuffer);
+    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];
    
     // Setup frame buffer
     //
@@ -257,8 +393,8 @@ const GLubyte Indices[]= {
                               GL_RENDERBUFFER, depthRenderbuffer);
     
     // Set color render buffer as current render buffer
-    //
-    glBindRenderbuffer(GL_RENDERBUFFER, viewRenderbuffer);
+    // 先绑定depthbuffer后绑定renderbuffer的话就不用再执行这行代码了
+    //glBindRenderbuffer(GL_RENDERBUFFER, viewRenderbuffer);
 
 }
 
@@ -290,7 +426,7 @@ const GLubyte Indices[]= {
     glClearColor(.4, .4, .4, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
     
   
@@ -301,64 +437,6 @@ const GLubyte Indices[]= {
     
     [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
-/*
-- (CLVDrawableVBO *) CreatVBO:(FBXLoader *)fbxLoader {
-   
-    GLsizeiptr sizeofVectex = fbxLoader->modelPositionList.size() * 4 * sizeof(float);
-    GLsizeiptr tt = sizeof(GLKVector4);
-    GLsizeiptr sizeofIndex = fbxLoader->modelIndexList.size() * sizeof(int);
-    
-    GLuint vectexBuffer;
-    glGenBuffers(1, &vectexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vectexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeofVectex, fbxLoader->modelPositionList.data(), GL_STATIC_DRAW);
-    
-    
-    std::vector<GLuint> ind;
-    for(int i = 0;i<(int)_fbxLoader->modelIndexList.size();i++) {
-        ind.push_back((GLuint)i);
-    }
-    
-    GLuint indexBuffer;
-    glGenBuffers(1, &indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofIndex, ind.data(), GL_STATIC_DRAW);
-    
-    CLVDrawableVBO *vbo = [[CLVDrawableVBO alloc]init];
-    vbo.vertexBuffer = vectexBuffer;
-    vbo.triangleIndexBuffer = indexBuffer;
-    vbo.vertexSize = (GLuint)fbxLoader->modelPositionList.size();
-    vbo.triangleIndexSize = (GLuint) fbxLoader->modelIndexList.size();
-    return vbo;
-}
-
-- (void) drawGL {
-    // Setup viewport
-    GLfloat vertices[] = {
-        0.0f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f,  -0.5f, 0.0f };
-    GLKVector3 glkv3;
-    std::vector<GLKVector3> vGLKV3;
-    vGLKV3.push_back(GLKVector3Make(0.0f, 0.5f, 0.0f));
-    vGLKV3.push_back(GLKVector3Make(-0.5f, -0.5f, 0.0f));
-    vGLKV3.push_back(GLKVector3Make(0.5f, -0.5f, 0.0f));
-   
-    glVertexAttribPointer(_positionSlot, 4, GL_FLOAT, GL_FALSE, 0, _fbxLoader->modelPositionList.data());
-    glEnableVertexAttribArray(_positionSlot);
-    //glDrawArrays(GL_LINE_LOOP, 0, sizeof(_fbxLoader->modelPositionList));
-   
-    NSLog(@"%lu",sizeof(_fbxLoader->modelIndexList)/sizeof(GLubyte));
-    NSLog(@"%lu",sizeof(_fbxLoader->modelIndexList));
-    NSLog(@"%lu",sizeof(GLubyte));
-    
-    std::vector<GLuint> ind;
-    for(int i = 0;i<(int)_fbxLoader->modelIndexList.size();i++) {
-        ind.push_back((GLuint)i);
-    }
-    glDrawElements(GL_LINES, (int)_fbxLoader->modelIndexList.size() , GL_UNSIGNED_INT, ind.data());
-}
-*/
 
 - (CLVDrawableVBO *) CreatVBO:(FBXLoader *)fbxLoader {
    
@@ -386,13 +464,15 @@ const GLubyte Indices[]= {
    
     GLuint indexBuffer;
     glGenBuffers(1, &indexBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    NSLog(@"fbxLoader->getMesh(0).indexList.size() = %lu",fbxLoader->getMesh(0).indexList.size() );
     if(!fbxLoader->getMesh(0).allByControlPoint) {
-        std::vector<GLuint> ind;
-        for(int i = 0;i<(int)fbxLoader->getMesh(0).indexList.size();i++) {
-            ind.push_back((GLuint)i);
-        }
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofIndex, ind.data(), GL_STATIC_DRAW);
+        //std::vector<GLuint> ind;
+        //for(int i = 0;i<(int)fbxLoader->getMesh(0).indexList.size();i++) {
+        //    ind.push_back((GLuint)i);
+        //}
+        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofIndex, ind.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofIndex, fbxLoader->getMesh(0).indexListControlByPolygon.data(), GL_STATIC_DRAW);
     } else {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofIndex, fbxLoader->getMesh(0).indexList.data(), GL_STATIC_DRAW);
     }
@@ -424,6 +504,10 @@ const GLubyte Indices[]= {
     glBindBuffer(GL_ARRAY_BUFFER, [_renderVBO vertexBuffer]);
     glVertexAttribPointer(_positionSlot, 4, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), BUFFER_OFFSET(offsetof(ModelVertex, position)));
     glVertexAttribPointer(_normalSlot, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), BUFFER_OFFSET(offsetof(ModelVertex, normal)));
+    glVertexAttribPointer(_texCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), BUFFER_OFFSET(offsetof(ModelVertex, uv0)));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _modelTexture);
+    glUniform1i(_textureUniform, 0);
     //glEnableVertexAttribArray(_positionSlot);
   
     /*
@@ -493,7 +577,9 @@ const GLubyte Indices[]= {
    // [self setupDepthBuffer];
    // [self setupFrameBuffer];
     [self setupBuffer];
-    
+    NSString *texturePath = [NSString stringWithCString:_fbxLoader->getTexturePath(0).c_str()
+                                               encoding:[NSString defaultCStringEncoding]];
+    _modelTexture = [self setupTexture:texturePath];
     [self updateTransform];
     
     _renderVBO = [self CreatVBO:_fbxLoader];

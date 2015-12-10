@@ -51,6 +51,7 @@
     GLint _normalSlot;
     GLint _ambientSlot;
     GLint _diffuseSlot;
+    GLint _emissionSlot;
     GLint _specularSlot;
     GLint _shininessSlot;
     
@@ -68,6 +69,7 @@
 @property (nonatomic, assign) GLKVector4 ambient;
 @property (nonatomic, assign) GLKVector4 diffuse;
 @property (nonatomic, assign) GLKVector4 specular;
+@property (nonatomic, assign) GLKVector4 emission;
 @property (nonatomic, assign) GLfloat    shininess;
 
 
